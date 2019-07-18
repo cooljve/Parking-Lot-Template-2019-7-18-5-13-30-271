@@ -10,10 +10,6 @@ public class ParkingOrder {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer orderId;
 
-  @ManyToOne
-  @JoinColumn(name = "parking_lot_name")
-  private ParkingLot parkingLot;
-
   private String carNumber;
 
   @Temporal(TemporalType.TIMESTAMP)
@@ -32,13 +28,6 @@ public class ParkingOrder {
     this.orderId = orderId;
   }
 
-  public ParkingLot getParkingLot() {
-    return parkingLot;
-  }
-
-  public void setParkingLot(ParkingLot parkingLot) {
-    this.parkingLot = parkingLot;
-  }
 
   public String getCarNumber() {
     return carNumber;
