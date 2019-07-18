@@ -1,9 +1,14 @@
 package com.thoughtworks.parking_lot.repository;
 
 import com.thoughtworks.parking_lot.model.ParkingLot;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ParkingLotRepository extends JpaRepository<ParkingLot,String> {
+public interface ParkingLotRepository extends JpaRepository<ParkingLot, String> {
+  @Query(value = "SELECT p FROM ParkingLot p")
+  Page<ParkingLot> findAllParkingLotsWithPagination(Pageable pageable);
 }

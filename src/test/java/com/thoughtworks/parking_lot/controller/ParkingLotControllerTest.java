@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -60,6 +61,20 @@ class ParkingLotControllerTest {
     result.andExpect(status().isOk());
 
     verify(repository).deleteById(parkingLot.getParkingLotName());
+  }
+
+  @Test
+  void should_find_all_parking_lots() throws Exception {
+    ParkingLot parkingLot = new ParkingLot();
+    parkingLot.setParkingLotName("A");
+    parkingLot.setLocation("zhuhai");
+    parkingLot.setCapacity(10);
+
+    ResultActions result = mvc.perform(get("/parking-lots?pageNum={pageNum}",1));
+
+    result.andExpect(status().isOk());
+
+    verify(repository).findAllParkingLotsWithPagination(any());
   }
 
 }
