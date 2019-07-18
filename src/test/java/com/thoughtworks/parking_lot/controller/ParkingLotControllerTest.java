@@ -15,10 +15,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
@@ -45,7 +45,6 @@ class ParkingLotControllerTest {
         .content(parkingLotJson));
 
     result.andExpect(status().isOk());
-
     verify(repository).save(any());
   }
 
@@ -59,7 +58,6 @@ class ParkingLotControllerTest {
     ResultActions result = mvc.perform(delete("/parking-lots/{parkingLotName}",parkingLot.getParkingLotName()));
 
     result.andExpect(status().isOk());
-
     verify(repository).deleteById(parkingLot.getParkingLotName());
   }
 
@@ -73,7 +71,6 @@ class ParkingLotControllerTest {
     ResultActions result = mvc.perform(get("/parking-lots?pageNum={pageNum}",1));
 
     result.andExpect(status().isOk());
-
     verify(repository).findAllParkingLotsWithPagination(any());
   }
 
@@ -83,12 +80,30 @@ class ParkingLotControllerTest {
     parkingLot.setParkingLotName("A");
     parkingLot.setLocation("zhuhai");
     parkingLot.setCapacity(10);
+    when(repository.findById(anyString())).thenReturn(java.util.Optional.ofNullable(parkingLot));
 
     ResultActions result = mvc.perform(get("/parking-lots/{parkingLotName}",parkingLot.getParkingLotName()));
 
     result.andExpect(status().isOk());
-
     verify(repository).findById(parkingLot.getParkingLotName());
+  }
+
+  @Test
+  void should_update_parking_lot_by_name() throws Exception {
+    ParkingLot parkingLot = new ParkingLot();
+    parkingLot.setParkingLotName("A");
+    parkingLot.setLocation("zhuhai");
+    parkingLot.setCapacity(10);
+    ObjectMapper mapper = new ObjectMapper();
+    String parkingLotJson = mapper.writeValueAsString(parkingLot);
+    when(repository.save(any())).thenReturn(parkingLot);
+
+    ResultActions result = mvc.perform(put("/parking-lots/{parkingLotName}",parkingLot.getParkingLotName())
+    .contentType(MediaType.APPLICATION_JSON)
+    .content(parkingLotJson));
+
+    result.andExpect(status().isOk());
+    verify(repository).save(any());
   }
 
 }

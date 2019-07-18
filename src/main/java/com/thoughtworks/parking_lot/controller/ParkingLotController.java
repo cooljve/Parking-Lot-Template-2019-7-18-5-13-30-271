@@ -3,9 +3,9 @@ package com.thoughtworks.parking_lot.controller;
 import com.thoughtworks.parking_lot.model.ParkingLot;
 import com.thoughtworks.parking_lot.repository.ParkingLotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,13 +26,19 @@ public class ParkingLotController {
   }
 
   @GetMapping(params = "pageNum")
-  public void findParkingLotsByPageAndPageSize(@RequestParam int pageNum) {
+  public Page<ParkingLot> findParkingLotsByPageAndPageSize(@RequestParam int pageNum) {
     Pageable pageable = PageRequest.of(pageNum, 15);
-    repository.findAllParkingLotsWithPagination(pageable);
+    return repository.findAllParkingLotsWithPagination(pageable);
   }
 
   @GetMapping("{parkingLotName}")
-  public void findParkingLotsByPageAndPageSize(@PathVariable String parkingLotName) {
-    repository.findById(parkingLotName);
+  public ParkingLot findParkingLotsByPageAndPageSize(@PathVariable String parkingLotName) {
+    return repository.findById(parkingLotName).get();
+  }
+
+  @PutMapping("{parkingLotName}")
+  public void updateParkingLot(@PathVariable String parkingLotName,@RequestBody ParkingLot parkingLot) {
+    parkingLot.setParkingLotName(parkingLotName);
+    repository.save(parkingLot);
   }
 }
