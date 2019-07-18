@@ -24,14 +24,14 @@ public class ParkingOrderController {
   @PostMapping(params = {"parkingLotName", "carNumber"})
   public String createParkingOrder(@RequestParam String parkingLotName, @RequestParam String carNumber) {
     ParkingLot parkingLot = lotRepository.findById(parkingLotName).get();
-    boolean isFull = parkingLot.getCapacity() < parkingLot.getParkingOrders().size();
+    boolean isFull = parkingLot.getCapacity() <= parkingLot.getParkingOrders().size();
     if (!isFull) {
       ParkingOrder order = new ParkingOrder();
       order.setCarNumber(carNumber);
       order.setCreateTime(new Date());
       orderReoisitory.save(order);
       return "成功停车";
-    } else return "";
+    } else return "该停车场已停满";
   }
 
   @PutMapping(params = "carNumber")

@@ -20,6 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ParkingOrderController.class)
@@ -47,8 +48,23 @@ class ParkingOrderControllerTest {
     ResultActions result = mvc.perform(post("/parking-orders" +
         "?parkingLotName={parkingLotName}&carNumber={carNumber}", parkingLotName, carNumber));
 
-    result.andExpect(status().isOk());
+    result.andExpect(status().isOk()).andExpect(content().string("成功停车"));
     verify(orderRepository).save(any());
+  }
+
+  @Test
+  void should_not_add_parking_order_when_parking_lot_is_full() throws Exception {
+    String carNumber = "粤A12345";
+    String parkingLotName = "OOCL";
+    ParkingLot parkingLot = new ParkingLot();
+    parkingLot.setCapacity(0);
+    parkingLot.setParkingOrders(new ArrayList<>());
+    when(lotRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(parkingLot));
+
+    ResultActions result = mvc.perform(post("/parking-orders" +
+        "?parkingLotName={parkingLotName}&carNumber={carNumber}", parkingLotName, carNumber));
+
+    result.andExpect(status().isOk()).andExpect(content().string("该停车场已停满"));
   }
 
   @Test
