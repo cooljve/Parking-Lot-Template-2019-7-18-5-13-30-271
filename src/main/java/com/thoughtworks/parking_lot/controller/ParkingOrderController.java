@@ -6,10 +6,7 @@ import com.thoughtworks.parking_lot.repository.ParkingLotRepository;
 import com.thoughtworks.parking_lot.repository.ParkingOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.Optional;
@@ -35,6 +32,14 @@ public class ParkingOrderController {
       orderReoisitory.save(order);
       return "成功停车";
     } else return "";
+  }
+
+  @PutMapping(params = "carNumber")
+  public void fetchCar(@RequestParam String carNumber) {
+    ParkingOrder order = orderReoisitory.findByCarNumberAndStatusTrue(carNumber);
+    order.setEndTime(new Date());
+    order.setStatus(false);
+    orderReoisitory.save(order);
   }
 
 }

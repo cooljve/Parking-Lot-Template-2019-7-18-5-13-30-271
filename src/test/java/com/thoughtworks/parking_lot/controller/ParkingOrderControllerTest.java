@@ -1,6 +1,7 @@
 package com.thoughtworks.parking_lot.controller;
 
 import com.thoughtworks.parking_lot.model.ParkingLot;
+import com.thoughtworks.parking_lot.model.ParkingOrder;
 import com.thoughtworks.parking_lot.repository.ParkingLotRepository;
 import com.thoughtworks.parking_lot.repository.ParkingOrderRepository;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ParkingOrderController.class)
@@ -44,6 +46,19 @@ class ParkingOrderControllerTest {
 
     ResultActions result = mvc.perform(post("/parking-orders" +
         "?parkingLotName={parkingLotName}&carNumber={carNumber}", parkingLotName, carNumber));
+
+    result.andExpect(status().isOk());
+    verify(orderRepository).save(any());
+  }
+
+  @Test
+  void should_update_parking_order() throws Exception {
+    String carNumber = "粤A12345";
+    ParkingOrder order = new ParkingOrder();
+    when(orderRepository.findByCarNumberAndStatusTrue(any())).thenReturn(order);
+
+    ResultActions result = mvc.perform(put("/parking-orders" +
+        "?carNumber={carNumber}", carNumber));
 
     result.andExpect(status().isOk());
     verify(orderRepository).save(any());
