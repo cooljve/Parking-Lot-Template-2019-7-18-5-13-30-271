@@ -1,6 +1,7 @@
 package com.thoughtworks.parking_lot.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 
 @Entity
 @Table
@@ -10,6 +11,7 @@ public class ParkingLot {
   @Column(unique = true)
   private String parkingLotName;
 
+  @Min(value = 0)
   private Integer capacity;
 
   private String location;
