@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,6 +46,20 @@ class ParkingLotControllerTest {
     result.andExpect(status().isOk());
 
     verify(repository).save(any());
+  }
+
+  @Test
+  void should_delete_parking_lot() throws Exception {
+    ParkingLot parkingLot = new ParkingLot();
+    parkingLot.setParkingLotName("A");
+    parkingLot.setLocation("zhuhai");
+    parkingLot.setCapacity(10);
+
+    ResultActions result = mvc.perform(delete("/parking-lots/{parkingLotName}",parkingLot.getParkingLotName()));
+
+    result.andExpect(status().isOk());
+
+    verify(repository).deleteById(parkingLot.getParkingLotName());
   }
 
 }
