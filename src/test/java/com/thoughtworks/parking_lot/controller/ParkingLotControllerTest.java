@@ -77,4 +77,18 @@ class ParkingLotControllerTest {
     verify(repository).findAllParkingLotsWithPagination(any());
   }
 
+  @Test
+  void should_find_parking_lot_by_name() throws Exception {
+    ParkingLot parkingLot = new ParkingLot();
+    parkingLot.setParkingLotName("A");
+    parkingLot.setLocation("zhuhai");
+    parkingLot.setCapacity(10);
+
+    ResultActions result = mvc.perform(get("/parking-lots/{parkingLotName}",parkingLot.getParkingLotName()));
+
+    result.andExpect(status().isOk());
+
+    verify(repository).findById(parkingLot.getParkingLotName());
+  }
+
 }

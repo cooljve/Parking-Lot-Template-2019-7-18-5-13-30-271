@@ -30,4 +30,9 @@ public class ParkingLotController {
     Pageable pageable = PageRequest.of(pageNum, 15);
     repository.findAllParkingLotsWithPagination(pageable);
   }
+
+  @GetMapping("{parkingLotName}")
+  public void findParkingLotsByPageAndPageSize(@PathVariable String parkingLotName) {
+    repository.findById(parkingLotName);
+  }
 }
