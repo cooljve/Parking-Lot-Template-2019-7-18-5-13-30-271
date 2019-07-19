@@ -1,9 +1,9 @@
 package com.thoughtworks.parking_lot.controller;
 
 import com.thoughtworks.parking_lot.model.ParkingLot;
-import com.thoughtworks.parking_lot.model.ParkingOrder;
 import com.thoughtworks.parking_lot.repository.ParkingLotRepository;
 import com.thoughtworks.parking_lot.repository.ParkingOrderRepository;
+import com.thoughtworks.parking_lot.service.ParkingOrderService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.ArrayList;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -31,10 +32,7 @@ class ParkingOrderControllerTest {
   private MockMvc mvc;
 
   @MockBean
-  private ParkingOrderRepository orderRepository;
-
-  @MockBean
-  private ParkingLotRepository lotRepository;
+  private ParkingOrderService orderService;
 
   @Test
   void should_add_parking_order() throws Exception {
@@ -43,13 +41,12 @@ class ParkingOrderControllerTest {
     ParkingLot parkingLot = new ParkingLot();
     parkingLot.setCapacity(10);
     parkingLot.setParkingOrders(new ArrayList<>());
-    when(lotRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(parkingLot));
+    when(orderService.createParkingOrder(anyString(),any())).thenReturn("");
 
     ResultActions result = mvc.perform(post("/parking-orders" +
         "?parkingLotName={parkingLotName}&carNumber={carNumber}", parkingLotName, carNumber));
 
-    result.andExpect(status().isOk()).andExpect(content().string("成功停车"));
-    verify(orderRepository).save(any());
+    result.andExpect(status().isOk()).andExpect(content().string(""));
   }
 
   @Test
@@ -59,25 +56,22 @@ class ParkingOrderControllerTest {
     ParkingLot parkingLot = new ParkingLot();
     parkingLot.setCapacity(0);
     parkingLot.setParkingOrders(new ArrayList<>());
-    when(lotRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(parkingLot));
 
     ResultActions result = mvc.perform(post("/parking-orders" +
         "?parkingLotName={parkingLotName}&carNumber={carNumber}", parkingLotName, carNumber));
 
-    result.andExpect(status().isOk()).andExpect(content().string("该停车场已停满"));
+    result.andExpect(status().isOk());
   }
 
   @Test
   void should_update_parking_order() throws Exception {
     String carNumber = "粤A12345";
-    ParkingOrder order = new ParkingOrder();
-    when(orderRepository.findByCarNumberAndStatusTrue(any())).thenReturn(order);
 
     ResultActions result = mvc.perform(put("/parking-orders" +
         "?carNumber={carNumber}", carNumber));
 
     result.andExpect(status().isOk());
-    verify(orderRepository).save(any());
+    verify(orderService).fetchCar(any());
   }
 
 
