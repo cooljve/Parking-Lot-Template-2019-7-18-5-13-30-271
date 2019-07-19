@@ -17,7 +17,7 @@ public class ParkingLot {
 
   private String location;
 
-  @OneToMany
+  @OneToMany(cascade = CascadeType.MERGE)
   @JoinColumn(name = "parking_lot_name")
   private List<ParkingOrder> parkingOrders;
 

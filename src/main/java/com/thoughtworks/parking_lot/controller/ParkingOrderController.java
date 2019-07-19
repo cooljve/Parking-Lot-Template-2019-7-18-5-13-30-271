@@ -5,18 +5,16 @@ import com.thoughtworks.parking_lot.model.ParkingOrder;
 import com.thoughtworks.parking_lot.repository.ParkingLotRepository;
 import com.thoughtworks.parking_lot.repository.ParkingOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.Optional;
 
 @RequestMapping(value = "parking-orders")
 @RestController
 public class ParkingOrderController {
 
   @Autowired
-  private ParkingOrderRepository orderReoisitory;
+  private ParkingOrderRepository orderRepository;
 
   @Autowired
   private ParkingLotRepository lotRepository;
@@ -29,17 +27,17 @@ public class ParkingOrderController {
       ParkingOrder order = new ParkingOrder();
       order.setCarNumber(carNumber);
       order.setCreateTime(new Date());
-      orderReoisitory.save(order);
+      orderRepository.save(order);
       return "成功停车";
     } else return "该停车场已停满";
   }
 
   @PutMapping(params = "carNumber")
   public void fetchCar(@RequestParam String carNumber) {
-    ParkingOrder order = orderReoisitory.findByCarNumberAndStatusTrue(carNumber);
+    ParkingOrder order = orderRepository.findByCarNumberAndStatusTrue(carNumber);
     order.setEndTime(new Date());
     order.setStatus(false);
-    orderReoisitory.save(order);
+    orderRepository.save(order);
   }
 
 }

@@ -3,6 +3,7 @@ package com.thoughtworks.parking_lot.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.parking_lot.model.ParkingLot;
 import com.thoughtworks.parking_lot.repository.ParkingLotRepository;
+import com.thoughtworks.parking_lot.service.ParkingLotService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,7 +29,7 @@ class ParkingLotControllerTest {
   private MockMvc mvc;
 
   @MockBean
-  private ParkingLotRepository repository;
+  private ParkingLotService service;
 
   @Test
   void should_add_parking_lot() throws Exception {
@@ -44,7 +46,7 @@ class ParkingLotControllerTest {
         .content(parkingLotJson));
 
     result.andExpect(status().isOk());
-    verify(repository).save(any());
+    verify(service).save(any());
   }
 
   @Test
@@ -57,7 +59,7 @@ class ParkingLotControllerTest {
     ResultActions result = mvc.perform(delete("/parking-lots/{parkingLotName}",parkingLot.getParkingLotName()));
 
     result.andExpect(status().isOk());
-    verify(repository).deleteById(parkingLot.getParkingLotName());
+    verify(service).deleteById(parkingLot.getParkingLotName());
   }
 
   @Test
@@ -66,11 +68,12 @@ class ParkingLotControllerTest {
     parkingLot.setParkingLotName("A");
     parkingLot.setLocation("zhuhai");
     parkingLot.setCapacity(10);
+    when(service.findAllParkingLotsWithPagination(anyInt())).thenReturn(null);
 
     ResultActions result = mvc.perform(get("/parking-lots?pageNum={pageNum}",1));
 
     result.andExpect(status().isOk());
-    verify(repository).findAllParkingLotsWithPagination(any());
+    verify(service).findAllParkingLotsWithPagination(anyInt());
   }
 
   @Test
@@ -79,12 +82,12 @@ class ParkingLotControllerTest {
     parkingLot.setParkingLotName("A");
     parkingLot.setLocation("zhuhai");
     parkingLot.setCapacity(10);
-    when(repository.findById(anyString())).thenReturn(java.util.Optional.ofNullable(parkingLot));
+    when(service.findById(anyString())).thenReturn(parkingLot);
 
     ResultActions result = mvc.perform(get("/parking-lots/{parkingLotName}",parkingLot.getParkingLotName()));
 
     result.andExpect(status().isOk());
-    verify(repository).findById(parkingLot.getParkingLotName());
+    verify(service).findById(parkingLot.getParkingLotName());
   }
 
   @Test
@@ -95,14 +98,13 @@ class ParkingLotControllerTest {
     parkingLot.setCapacity(10);
     ObjectMapper mapper = new ObjectMapper();
     String parkingLotJson = mapper.writeValueAsString(parkingLot);
-    when(repository.save(any())).thenReturn(parkingLot);
 
     ResultActions result = mvc.perform(put("/parking-lots/{parkingLotName}",parkingLot.getParkingLotName())
     .contentType(MediaType.APPLICATION_JSON)
     .content(parkingLotJson));
 
     result.andExpect(status().isOk());
-    verify(repository).save(any());
+    verify(service).update(anyString(),any());
   }
 
 }
