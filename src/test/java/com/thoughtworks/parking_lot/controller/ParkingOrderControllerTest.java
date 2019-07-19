@@ -1,8 +1,6 @@
 package com.thoughtworks.parking_lot.controller;
 
 import com.thoughtworks.parking_lot.model.ParkingLot;
-import com.thoughtworks.parking_lot.repository.ParkingLotRepository;
-import com.thoughtworks.parking_lot.repository.ParkingOrderRepository;
 import com.thoughtworks.parking_lot.service.ParkingOrderService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

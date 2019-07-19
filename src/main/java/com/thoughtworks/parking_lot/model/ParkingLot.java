@@ -9,6 +9,9 @@ import java.util.List;
 public class ParkingLot {
 
   @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer lotId;
+
   @Column(unique = true)
   private String parkingLotName;
 
@@ -18,8 +21,16 @@ public class ParkingLot {
   private String location;
 
   @OneToMany(cascade = CascadeType.MERGE)
-  @JoinColumn(name = "parking_lot_name")
+  @JoinColumn(name = "parking_lot_id")
   private List<ParkingOrder> parkingOrders;
+
+  public Integer getLotId() {
+    return lotId;
+  }
+
+  public void setLotId(Integer lotId) {
+    this.lotId = lotId;
+  }
 
   public String getParkingLotName() {
     return parkingLotName;
